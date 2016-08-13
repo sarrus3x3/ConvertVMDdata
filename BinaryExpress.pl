@@ -55,6 +55,7 @@ my %ParentHash; # $ParentHash{フレーム番号} = "全ての親"ボーンの�
 
 my %FramesHash; # $ParentHash と $CenterHash のフレーム番号を保持
 
+my $SuccessFlg = 1;
 
 ###### 合成の対象フレーム名を定義
 my $parent; # 全ての親
@@ -207,10 +208,13 @@ foreach my $f ( 0 .. $MaxFrameNum-1 )
 		}
 		else
 		{
-			die;
+			$SuccessFlg = 0;
+			my $bonename_decode = decode('SJIS', $bonename );
+			my $outstring = "${bonename_decode}処理中、${framenum}フレーム目、全ての親のキーフレームがありません。\n";
+			print encode('cp932', $outstring );
+			#die;
 			# 同じフレームに、"全ての親"ボーンのキーフレーム打っていない場合はサポート対象外！
 			# ない場合は、エディタ（MMD）で事前にキーフレームを打っておくこと。
-			
 		}
 	}
 	
@@ -226,6 +230,17 @@ foreach my $f ( 0 .. $MaxFrameNum-1 )
 while( read(IN, $code, 1) )
 {
 	print OUT $code ;
+}
+
+
+# 成功／失敗の出力
+if( $SuccessFlg == 1 )
+{
+	print encode('cp932', "成功" );
+}
+else
+{
+	print encode('cp932', "失敗" );
 }
 
 print "\n--- end\n";
